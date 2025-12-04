@@ -131,9 +131,6 @@ class ClashMeta extends AbstractProtocol
             }
         }
 
-        $config['proxy-groups'] = array_filter($config['proxy-groups'], function ($group) {
-            return $group['proxies'];
-        });
         $config['proxy-groups'] = array_values($config['proxy-groups']);
         $config = $this->buildRules($config);
 

@@ -121,27 +121,16 @@ class ClashMeta extends AbstractProtocol
         }
 
         $config['proxies'] = array_merge($config['proxies'] ? $config['proxies'] : [], $proxy);
-        foreach ($config['proxy-groups'] as $k => $v) {
-            if (!is_array($config['proxy-groups'][$k]['proxies']))
-                $config['proxy-groups'][$k]['proxies'] = [];
-            $isFilter = false;
-            foreach ($config['proxy-groups'][$k]['proxies'] as $src) {
-                foreach ($proxies as $dst) {
-                    if (!$this->isRegex($src))
-                        continue;
-                    $isFilter = true;
-                    $config['proxy-groups'][$k]['proxies'] = array_values(array_diff($config['proxy-groups'][$k]['proxies'], [$src]));
-                    if ($this->isMatch($src, $dst)) {
-                        array_push($config['proxy-groups'][$k]['proxies'], $dst);
-                    }
-                }
-                if ($isFilter)
-                    continue;
-            }
-            if ($isFilter)
+
+        foreach ($config['proxy-groups'] as $k => $group) {
+            if (!isset($group['proxies']) || !is_array($group['proxies'])) {
                 continue;
-            $config['proxy-groups'][$k]['proxies'] = array_merge($config['proxy-groups'][$k]['proxies'], $proxies);
+            }
+            if (count($group['proxies']) === 1 && trim($group['proxies'][0]) === '__Xboard__') {
+                $config['proxy-groups'][$k]['proxies'] = $proxies;
+            }
         }
+
         $config['proxy-groups'] = array_filter($config['proxy-groups'], function ($group) {
             return $group['proxies'];
         });
@@ -261,10 +250,12 @@ class ClashMeta extends AbstractProtocol
             case 'tcp':
                 $array['network'] = data_get($protocol_settings, 'network_settings.header.type', 'tcp');
                 if (data_get($protocol_settings, 'network_settings.header.type', 'none') !== 'none') {
-                    if ($httpOpts = array_filter([
-                        'headers' => data_get($protocol_settings, 'network_settings.header.request.headers'),
-                        'path' => data_get($protocol_settings, 'network_settings.header.request.path', ['/'])
-                    ])) {
+                    if (
+                        $httpOpts = array_filter([
+                            'headers' => data_get($protocol_settings, 'network_settings.header.request.headers'),
+                            'path' => data_get($protocol_settings, 'network_settings.header.request.path', ['/'])
+                        ])
+                    ) {
                         $array['http-opts'] = $httpOpts;
                     }
                 }

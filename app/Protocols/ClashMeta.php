@@ -174,7 +174,7 @@ class ClashMeta extends AbstractProtocol
         $array['port'] = $server['port'];
         $array['cipher'] = data_get($server['protocol_settings'], 'cipher');
         $array['password'] = data_get($server, 'password', $password);
-        $array['udp'] = true;
+        $array['udp'] = in_array("udp", $server['tags']);
         if (data_get($protocol_settings, 'plugin') && data_get($protocol_settings, 'plugin_opts')) {
             $plugin = data_get($protocol_settings, 'plugin');
             $pluginOpts = data_get($protocol_settings, 'plugin_opts', '');
@@ -234,7 +234,7 @@ class ClashMeta extends AbstractProtocol
             'uuid' => $uuid,
             'alterId' => 0,
             'cipher' => 'auto',
-            'udp' => true
+            'udp' => in_array("udp", $server['tags'])
         ];
 
         if (data_get($protocol_settings, 'tls')) {
@@ -287,7 +287,7 @@ class ClashMeta extends AbstractProtocol
             'uuid' => $password,
             'alterId' => 0,
             'cipher' => 'auto',
-            'udp' => true,
+            'udp' => in_array("udp", $server['tags']),
             'flow' => data_get($protocol_settings, 'flow'),
             'tls' => false
         ];
@@ -343,7 +343,7 @@ class ClashMeta extends AbstractProtocol
             'server' => $server['host'],
             'port' => $server['port'],
             'password' => $password,
-            'udp' => true,
+            'udp' => in_array("udp", $server['tags']),
             'skip-cert-verify' => (bool) data_get($protocol_settings, 'allow_insecure', false)
         ];
         if ($serverName = data_get($protocol_settings, 'server_name')) {
@@ -421,7 +421,7 @@ class ClashMeta extends AbstractProtocol
             'type' => 'tuic',
             'server' => $server['host'],
             'port' => $server['port'],
-            'udp' => true,
+            'udp' => in_array("udp", $server['tags']),
         ];
 
         if (data_get($protocol_settings, 'version') === 4) {
@@ -456,7 +456,7 @@ class ClashMeta extends AbstractProtocol
             'server' => $server['host'],
             'port' => $server['port'],
             'password' => $password,
-            'udp' => true,
+            'udp' => in_array("udp", $server['tags']),
         ];
 
         if ($serverName = data_get($protocol_settings, 'tls.server_name')) {
@@ -499,7 +499,7 @@ class ClashMeta extends AbstractProtocol
         $array['type'] = 'socks5';
         $array['server'] = $server['host'];
         $array['port'] = $server['port'];
-        $array['udp'] = true;
+        $array['udp'] = in_array("udp", $server['tags']);
 
         $array['username'] = $password;
         $array['password'] = $password;
